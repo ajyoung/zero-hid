@@ -10,7 +10,7 @@ from zero_hid import Keyboard, KeyCodes
 import time
 import os
 
-def send_key(*list, *keycode):
+def send_key(list, keycode):
     #print(f"Sending: {keys}")
     with Keyboard() as k:
         k.press(list, keycode)
