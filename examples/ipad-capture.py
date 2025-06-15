@@ -28,7 +28,7 @@ def run_grid_loop(num_rows=3, num_columns=3, start_workout=0, total_workouts=Non
     if total_workouts is not None:
         total = min(total, total_workouts - start_workout)
 
-    for i in range(total):
+    for i in range(total + 1):
         print(f"\n=== Processing workout {i + 1} ===")
 
         # Tab to select the workout tile (repeat tab if not first tile)
@@ -41,7 +41,10 @@ def run_grid_loop(num_rows=3, num_columns=3, start_workout=0, total_workouts=Non
 
         if (i + 1) < start_workout:
             print(f"\n=== Skipping workout {i + 1} due to start index ===")
-            continue       
+            continue  
+
+        if i == total:
+            continue     
 
         # Open workout
         send_key([], KeyCodes.KEY_SPACE)
@@ -49,7 +52,7 @@ def run_grid_loop(num_rows=3, num_columns=3, start_workout=0, total_workouts=Non
 
         # Screenshot (using Cmd+Shift+3 as default full screenshot)
         send_key([KeyCodes.MOD_LEFT_GUI, KeyCodes.MOD_LEFT_SHIFT], KeyCodes.KEY_3)
-        wait(4)
+        wait(3)
 
         # Go back
         send_key([], KeyCodes.KEY_UP)
@@ -76,7 +79,7 @@ def run_session(num_workouts, start_workout=1, num_rows=3, num_columns=3):
         print(f"\n=== Remaining workouts {remaining_workouts} ===")
         if remaining_workouts <= 0:
             break
-        wait(1.5)
+        wait(0.5)
 
 # Entry point
 if __name__ == "__main__":
