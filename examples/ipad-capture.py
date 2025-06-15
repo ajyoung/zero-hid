@@ -32,7 +32,7 @@ def run_grid_loop(num_rows=3, num_columns=3, start_workout=0, total_workouts=Non
         print(f"\n=== Processing workout {i + 1} ===")
 
         # Tab to select the workout tile (repeat tab if not first tile)
-        if i == 0 or (i+1) % num_columns == 0:
+        if i % num_columns == 0:
             send_key([], KeyCodes.KEY_DOWN)
         else:
             send_key([], KeyCodes.KEY_RIGHT) 
