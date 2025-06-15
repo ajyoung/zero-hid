@@ -46,16 +46,16 @@ def run_grid_loop(num_rows=3, num_columns=3, start_workout=1, total_workouts=18)
 
         # Open workout
         send_key([], KeyCodes.KEY_SPACE)
-        wait(0.5)  # Allow workout page to load
+        wait(1)  # Allow workout page to load
 
         # Screenshot (using Cmd+Shift+3 as default full screenshot)
         send_key([KeyCodes.MOD_LEFT_GUI, KeyCodes.MOD_LEFT_SHIFT], KeyCodes.KEY_3)
-        wait(3)
+        wait(4)
 
         # Go back
         send_key([], KeyCodes.KEY_UP)
         send_key([], KeyCodes.KEY_SPACE)
-        wait(0.5)
+        wait(1)
 
     print("\n=== Finished current grid ===")
 
