@@ -34,6 +34,9 @@ def run_grid_loop(num_rows=3, num_columns=3, start_workout=0, total_workouts=Non
         # Tab to select the workout tile (repeat tab if not first tile)
         if i % num_columns == 0:
             send_key([], KeyCodes.KEY_DOWN)
+            if i > 0:
+                send_key([], KeyCodes.KEY_LEFT)
+                send_key([], KeyCodes.KEY_LEFT)
         else:
             send_key([], KeyCodes.KEY_RIGHT) 
 
