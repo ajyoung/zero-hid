@@ -62,25 +62,25 @@ def run_grid_loop(num_rows=3, num_columns=3, start_workout=0, total_workouts=Non
     #wait(1.0)
 
 # -- Run entire scraping session for Strength workouts --
-def run_session(num_workouts, start_workout=0, num_rows=3, num_columns=3):
+def run_session(num_workouts, start_workout=1, num_rows=3, num_columns=3):
     workouts_per_page = num_rows * num_columns
     num_scrolls = (num_workouts + workouts_per_page - 1) // workouts_per_page  # Ceiling division
 
     for s in range(num_scrolls):
         print(f"\n--- Scroll set {s + 1} ---")
-        current_start = start_workout + (s * workouts_per_page)
-        remaining_workouts = num_workouts - (current_start - start_workout)
+        current_start = start_workout % workouts_per_page
+        run_grid_loop(num_rows, num_columns, current_start, num_workouts)
+        remaining_workouts = num_workouts - (workouts_per_page * s)
         print(f"\n=== Remaining workouts {remaining_workouts} ===")
         if remaining_workouts <= 0:
             break
-        run_grid_loop(num_rows, num_columns, current_start, num_workouts)
         wait(1.5)
 
 # Entry point
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Capture screenshots of workouts from iPad fitness app')
     parser.add_argument('num_workouts', type=int, help='Number of workouts to capture')
-    parser.add_argument('--start', type=int, default=0, help='Workout number to start from (0-based)')
+    parser.add_argument('--start', type=int, default=1, help='Workout number to start from (1-based)')
     parser.add_argument('--rows', type=int, default=3, help='Number of rows in the workout grid')
     parser.add_argument('--columns', type=int, default=3, help='Number of columns in the workout grid')
     
