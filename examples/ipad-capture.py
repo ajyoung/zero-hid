@@ -5,6 +5,7 @@
 # mouse or touch input.
 import time
 import os
+import argparse
 from zero_hid import Keyboard, KeyCodes
 
 import time
@@ -22,8 +23,10 @@ def wait(seconds):
     time.sleep(seconds)
 
 # -- Navigation loop --
-def run_grid_loop(num_rows=3, num_columns=3):
+def run_grid_loop(num_rows=3, num_columns=3, start_workout=0, total_workouts=None):
     total = num_rows * num_columns
+    if total_workouts is not None:
+        total = min(total, total_workouts - start_workout)
 
     for i in range(total):
         print(f"\n=== Processing workout {i + 1} ===")
@@ -32,7 +35,11 @@ def run_grid_loop(num_rows=3, num_columns=3):
         if i > 0 and i % num_columns == 0:
             send_key([], KeyCodes.KEY_DOWN)
         else:
-            send_key([], KeyCodes.KEY_RIGHT)    
+            send_key([], KeyCodes.KEY_RIGHT) 
+
+        if i < start_workout:
+            print(f"\n=== Skipping workout {i + 1} due to start index ===")
+            continue       
 
         # Open workout
         send_key([], KeyCodes.KEY_SPACE)
@@ -40,7 +47,7 @@ def run_grid_loop(num_rows=3, num_columns=3):
 
         # Screenshot (using Cmd+Shift+3 as default full screenshot)
         send_key([KeyCodes.MOD_LEFT_GUI, KeyCodes.MOD_LEFT_SHIFT], KeyCodes.KEY_3)
-        wait(3)
+        wait(4)
 
         # Go back
         send_key([], KeyCodes.KEY_UP)
@@ -49,21 +56,34 @@ def run_grid_loop(num_rows=3, num_columns=3):
 
     print("\n=== Finished current grid ===")
 
-    # Scroll down after each set
+    # Scroll down after each set -- not needed since page down works
     #print("Scrolling down for next set...")
     #send_key('page-down')  # Or try down arrow if Page Down is unsupported
     #wait(1.0)
 
 # -- Run entire scraping session for Strength workouts --
-def run_session():
-    num_scrolls = 10  # Adjust based on number of pages
+def run_session(num_workouts, start_workout=0, num_rows=3, num_columns=3):
+    workouts_per_page = num_rows * num_columns
+    num_scrolls = (num_workouts + workouts_per_page - 1) // workouts_per_page  # Ceiling division
 
     for s in range(num_scrolls):
         print(f"\n--- Scroll set {s + 1} ---")
-        run_grid_loop()
+        current_start = start_workout + (s * workouts_per_page)
+        remaining_workouts = num_workouts - (current_start - start_workout)
+        print(f"\n=== Remaining workouts {remaining_workouts} ===")
+        if remaining_workouts <= 0:
+            break
+        run_grid_loop(num_rows, num_columns, current_start, num_workouts)
         wait(1.5)
 
 # Entry point
 if __name__ == "__main__":
-    run_session()
+    parser = argparse.ArgumentParser(description='Capture screenshots of workouts from iPad fitness app')
+    parser.add_argument('num_workouts', type=int, help='Number of workouts to capture')
+    parser.add_argument('--start', type=int, default=0, help='Workout number to start from (0-based)')
+    parser.add_argument('--rows', type=int, default=3, help='Number of rows in the workout grid')
+    parser.add_argument('--columns', type=int, default=3, help='Number of columns in the workout grid')
+    
+    args = parser.parse_args()
+    run_session(args.num_workouts, args.start, args.rows, args.columns)
 
